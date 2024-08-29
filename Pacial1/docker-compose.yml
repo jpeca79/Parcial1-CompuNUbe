@@ -1,0 +1,44 @@
+version: '3.8'
+services:
+  mysql:
+    image: mysql:latest
+    ports:
+      - "3307:3306" # Cambiado a 3307
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: myflaskapp
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  microorders:
+    build: ./microorders
+    ports:
+      - "5004:5004"
+    depends_on:
+      - mysql
+
+  microusers:
+    build: ./microusers
+    ports:
+      - "5002:5002"
+    depends_on:
+      - mysql
+
+  microproducts:
+    build: ./microproducts
+    ports:
+      - "5003:5003"
+    depends_on:
+      - mysql
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5001:5001"
+    depends_on:
+      - microorders
+      - microusers
+      - microproducts
+
+volumes:
+  mysql_data:
